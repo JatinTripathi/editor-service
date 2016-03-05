@@ -3,9 +3,13 @@ var morgan=require('morgan');
 var logger=require('./log/logger.js');
 var path=require('path');
 var mongo=require('mongoose');
-var doc=require('./models/document.js')
+var schema=require('./models/document.js');
+var bodyParser=require('body-parser');
 
 var app=express();
+
+//==============Express Config=============//
+app.use(bodyParser.urlencoded({extended:false}));
 
 
 //============Mongodb Config================//
@@ -13,36 +17,57 @@ var save=mongo.createConnection('http://localhost:27017/savedDocs');
 var publish=mongo.createConnection('http://localhost:27017/publishedDocs');
 
 
+//================Mongo Models==============//
+var savedDoc=save.model('savedDoc',schema);
+var publishedDoc=publish.model('publishedDoc',schema);
+
+
 //============Express Config================//
 app.use(morgan('combine',{'stream':logger.stream}));
 logger.info('Overriding Express Logger');
 
 
-//============View Config===============//
+//=======================View Config=======================//
 app.set('views',path.join(__dirname(),'views'));
 app.set('view engine','jade');
 
 
-//==========Index Routing==========//
+//======================Index Routing===================//
 app.get('/editor',function(req,res){
     res.render('editor');
 });
 
-app.post('/editor/publish',function(req,res){
-    var newDoc=new doc;
+app.post('/publish',function(req,res){
+    var newDoc=new publishedDoc;
+    newDoc.userId=
     newDoc.title=req.body.title;
     newDoc.shortScript=req.body.shortScript;
     newDoc.body=req.body.body;
     
-    newDoc.save(function(err,newDoc){
+    newDoc.save(function(err){
         if(err) logger.error('Something went wrong while saving the the document');
-        logger.info('New Document Saved');
+        logger.info('New Document Published');
     });
-    res.redirect('/home');
+    res.send('Published');
+});
+
+//Saved Using Ajax
+app.post('/editor/save',function(req,res){
+    var newDoc=new savedDoc;
+    newDoc.userId=
+    newDoc.title=req.body.title;
+    newDoc.shortScript=req.body.shortScript;
+    newDoc.body=req.body.body;
+    
+    newDoc.save(function(err){
+        if(err) logger.error('Something went wrong while saving the the document');
+        logger.info('Document "'+req.body.title+'" is Saved');
+    });
+    res.send('Saved');
 });
 
 
-//===========Port Config==========//
+//======================Port Config====================//
 var port=process.env.port||8081;
 app.listen(port);
 logger.info('Listening at Port No.'+port);
