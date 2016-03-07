@@ -3,4 +3,9 @@ extend layout
 block content
     div.container
         div.row
-            div.
+            div.editor(name='editorContent')
+                h1(data-placeholder='Title' class='text-center')
+                h3(data-placeholder='Your Shortscript' class='text-center')
+                div(data-placeholder='Your Paper content here.' class='text-center')
+            a(action='/save' method='post' class='text-center')Save
+            a(action='/publish' method='post' class='text-center')Publish
