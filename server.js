@@ -13,8 +13,8 @@ app.use(bodyParser.urlencoded({extended:false}));
 
 
 //============Mongodb Config================//
-var save=mongo.createConnection('http://mongo:27018/savedDocs');
-var publish=mongo.createConnection('http://mongo:27018/publishedDocs');
+var save=mongo.createConnection('mongodb://mongo:27018/savedDocs');
+var publish=mongo.createConnection('mongodb://mongo:27018/publishedDocs');
 
 
 //================Mongo Models==============//
