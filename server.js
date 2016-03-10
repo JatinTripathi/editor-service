@@ -57,7 +57,7 @@ app.post('/editor/publish',function(req,res){
             logger.info('New Document Published');
         });
         res.send('Published');
-}
+});
 /*
     else if(req.body.save){
         var newDoc=new savedDoc;
