@@ -11,7 +11,7 @@ logger.info('Done Initiation');
 
 //==============Express Config=============//
 app.use(bodyParser.urlencoded({extended:false}));
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 
 
 //============Mongodb Config================//
