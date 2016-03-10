@@ -3,7 +3,6 @@ var morgan=require('morgan');
 var logger=require('./log/logger.js');
 var path=require('path');
 var mongo=require('mongoose');
-var schema=require('./models/document.js');
 var bodyParser=require('body-parser');
 
 var app=express();
@@ -16,7 +15,14 @@ app.use(bodyParser.urlencoded({extended:false}));
 var save=mongo.createConnection('mongodb://mongo:27018/savedDocs');
 var publish=mongo.createConnection('mongodb://mongo:27018/publishedDocs');
 
-
+//===============Schema Init================//
+var schema=new mongo.Schema({
+    userId:'string',
+    title:'string',
+    shortScript:'string',
+    body:'string'});
+    
+    
 //================Mongo Models==============//
 var savedDoc=save.model('savedDoc',schema);
 var publishedDoc=publish.model('publishedDoc',schema);
@@ -28,7 +34,7 @@ logger.info('Overriding Express Logger');
 
 
 //=======================View Config=======================//
-app.set('views',path.join(__dirname(),'views'));
+app.set('views',path.join(__dirname,'views'));
 app.set('view engine','jade');
 
 
