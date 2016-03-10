@@ -45,36 +45,52 @@ app.get('/editor',function(req,res){
     res.render('editor');
 });
 
-app.post('/publish',function(req,res){
-    var newDoc=new publishedDoc;
-    newDoc.userId=
-    newDoc.title=req.body.title;
-    newDoc.shortScript=req.body.shortScript;
-    newDoc.body=req.body.body;
-    
-    newDoc.save(function(err){
-        if(err) logger.error('Something went wrong while saving the the document');
-        logger.info('New Document Published');
-    });
-    res.send('Published');
+app.post('/editor',function(req,res){
+    if(req.body.publish){
+        var newDoc=new publishedDoc;
+        newDoc.userId=
+        newDoc.title=req.body.title;
+        newDoc.shortScript=req.body.shortScript;
+        newDoc.body=req.body.body;
+        
+        newDoc.save(function(err){
+            if(err) logger.error('Something went wrong while saving the the document');
+            logger.info('New Document Published');
+        });
+        res.send('Published');
+    }
+    else if(req.body.save){
+        var newDoc=new savedDoc;
+        newDoc.userId=
+        newDoc.title=req.body.title;
+        newDoc.shortScript=req.body.shortScript;
+        newDoc.body=req.body.body;
+        
+        newDoc.save(function(err){
+            if(err) logger.error('Something went wrong while saving the the document');
+            logger.info('Document "'+req.body.title+'" is Saved');
+        });
+        res.send('Saved');
+    }
 });
 
 //Saved Using Ajax
 //===========TODO Persisting single record only
+/*
 app.post('/editor/save',function(req,res){
-    var newDoc=new savedDoc;
-    newDoc.userId=
-    newDoc.title=req.body.title;
-    newDoc.shortScript=req.body.shortScript;
-    newDoc.body=req.body.body;
-    
-    newDoc.save(function(err){
-        if(err) logger.error('Something went wrong while saving the the document');
-        logger.info('Document "'+req.body.title+'" is Saved');
-    });
-    res.send('Saved');
+        var newDoc=new savedDoc;
+        newDoc.userId=
+        newDoc.title=req.body.title;
+        newDoc.shortScript=req.body.shortScript;
+        newDoc.body=req.body.body;
+        
+        newDoc.save(function(err){
+            if(err) logger.error('Something went wrong while saving the the document');
+            logger.info('Document "'+req.body.title+'" is Saved');
+        });
+        res.send('Saved');
 });
-
+*/
 
 //======================Port Config====================//
 var port=process.env.port||8080;
