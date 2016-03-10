@@ -1,19 +1,9 @@
-doctype html
-html
-    head
-        title=title
-        link(rel='stylesheet', href='//cdn.jsdelivr.net/medium-editor/latest/css/medium-editor.min.css' type='text/css' media='screen' charset='utf-8')
-        link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
-        link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.min.css')
-        link(rel='stylesheet', href='/stylesheets/style.css')
-        script(src='/bootstrap/js/bootstrap.min.js')
-        script(src='//cdn.jsdelivr.net/medium-editor/latest/js/medium-editor.min.js')
-        script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
-        script(src='../public/js/editorAjax')
-        
-    body
-        div.container
-            div.row
+extends layout
+
+block content
+    div.container
+        div.row
+            div.col-sm-10.col-md-8.col-md-offset-8
                 form(name='editorContent',action='/editor',method='POST')
                     div.input.editor(class='text-center')
                         h1(name='title') Your Title
