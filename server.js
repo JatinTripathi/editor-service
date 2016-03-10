@@ -45,8 +45,7 @@ app.get('/editor',function(req,res){
     res.render('editor');
 });
 
-app.post('/editor',function(req,res){
-    if(req.body.publish){
+app.post('/editor/publish',function(req,res){
         var newDoc=new publishedDoc;
         newDoc.userId=
         newDoc.title=req.body.title;
@@ -58,7 +57,8 @@ app.post('/editor',function(req,res){
             logger.info('New Document Published');
         });
         res.send('Published');
-    }
+}
+/*
     else if(req.body.save){
         var newDoc=new savedDoc;
         newDoc.userId=
@@ -73,10 +73,10 @@ app.post('/editor',function(req,res){
         res.send('Saved');
     }
 });
+*/
 
 //Saved Using Ajax
 //===========TODO Persisting single record only
-/*
 app.post('/editor/save',function(req,res){
         var newDoc=new savedDoc;
         newDoc.userId=
@@ -90,7 +90,6 @@ app.post('/editor/save',function(req,res){
         });
         res.send('Saved');
 });
-*/
 
 //======================Port Config====================//
 var port=process.env.port||8080;
