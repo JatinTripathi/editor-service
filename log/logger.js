@@ -2,14 +2,15 @@ var winston=require('winston');
 winston.emitErrs=true;
 
 var logger=new (winston.Logger)({
-    level:'debug',
-    transport:[
+    transports:[
         new (winston.transports.Console)({
+            level:'debug',
             timestamp:true,
             handleException:true,
             colorize:true
         }),
         new (winston.transports.File)({
+            level:'debug',
             timestamp:true,
             handleExceptions:true,
             colorize:true,
