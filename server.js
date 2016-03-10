@@ -6,14 +6,16 @@ var mongo=require('mongoose');
 var bodyParser=require('body-parser');
 
 var app=express();
+logger.info('Done Initiation');
+
 
 //==============Express Config=============//
 app.use(bodyParser.urlencoded({extended:false}));
 
 
 //============Mongodb Config================//
-var save=mongo.createConnection('mongodb://mongo:27018/savedDocs');
-var publish=mongo.createConnection('mongodb://mongo:27018/publishedDocs');
+var save=mongo.createConnection('mongodb://192.168.99.100:27018/savedDocs');
+var publish=mongo.createConnection('mongodb://192.168.99.100:27018/publishedDocs');
 
 //===============Schema Init================//
 var schema=new mongo.Schema({
