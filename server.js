@@ -12,18 +12,20 @@ logger.info('Done Initiation');
 //==============Express Config=============//
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(express.static(__dirname + '/public'));
-
+app.set('views',path.join(__dirname,'views'));
+app.set('view engine','jade');
 
 //============Mongodb Config================//
 var save=mongo.createConnection('mongodb://db/savedDocs');
 var publish=mongo.createConnection('mongodb://db/publishedDocs');
 
+
 //===============Schema Init================//
 var schema=new mongo.Schema({
     userId:'string',
-    title:'string',
-    shortScript:'string',
-    body:'string'});
+    title:{type:string, es_indexed:true},
+    shortScript:{type:string, es_indexed:true},
+    body:{type:string, es_indexed:true}
     
     
 //================Mongo Models==============//
@@ -31,14 +33,28 @@ var savedDoc=save.model('savedDoc',schema);
 var publishedDoc=publish.model('publishedDoc',schema);
 
 
+//================Mongoosastic Config=========//
+schema.plugin(mongoosastic,{
+	host:'search',
+	port:9200,
+	protocol:'https',
+	culrDebug:true}
+//=================Mapping
+savedDoc.createMapping(function(err,mapping){
+	if(err){
+		logger.error('error creating mapping');
+		logger.log(err);
+		}
+	else{
+		logger.info('mapping created!');
+		logger.info(mapping);
+	}
+});
+
+
 //============Express Config================//
 app.use(morgan('combine',{'stream':logger.stream}));
 logger.info('Overriding Express Logger');
-
-
-//=======================View Config=======================//
-app.set('views',path.join(__dirname,'views'));
-app.set('view engine','jade');
 
 
 //======================Index Routing===================//
@@ -57,6 +73,7 @@ app.post('/editor/publish',function(req,res){
             if(err) logger.error('Something went wrong while saving the the document');
             logger.info('New Document Published');
         });
+	
         res.send('Published');
 });
 /*
