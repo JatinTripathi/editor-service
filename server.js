@@ -15,8 +15,8 @@ app.use(express.static(__dirname + '/public'));
 
 
 //============Mongodb Config================//
-var save=mongo.createConnection('mongodb://192.168.99.100:27018/savedDocs');
-var publish=mongo.createConnection('mongodb://192.168.99.100:27018/publishedDocs');
+var save=mongo.createConnection('mongodb://db/savedDocs');
+var publish=mongo.createConnection('mongodb://db/publishedDocs');
 
 //===============Schema Init================//
 var schema=new mongo.Schema({
