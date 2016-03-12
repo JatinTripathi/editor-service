@@ -1,5 +1,5 @@
 var doc={};
-doc.heading=$("#title").html();
+doc.heading=$("#heading").html();
 doc.shortScript=$("#shortScript").html();
 doc.paperContent=$("#paperContent").html();
 
