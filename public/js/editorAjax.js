@@ -1,7 +1,7 @@
 var doc={};
 doc.heading=$("#title").html();
 doc.shortScript=$("#shortScript").html();
-doc.content=$("#body").html();
+doc.paperContent=$("#paperContent").html();
 
 var paper=JSON.stringify(doc);
 
