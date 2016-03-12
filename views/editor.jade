@@ -4,11 +4,12 @@ block content
     div.container
         div.row
             div.col-sm-10.col-md-8.col-md-offset-8
-                form(id='editorContent')
-                    div.input.editor(class='text-center')
-                        h1(name='title') Your Title
-                        h3(name='shortScript') Your Shortscript
-                        h5(name='content') Your Paper content here.
-                    div.actions(class='text-center')
-                        input(type="submit",id="save",value="Save",class="btn btn-primary") 
-                        input(type="submit",id="publish",value="Publish",class="btn btn-primary")
+                 div.editor.text-center
+                      h1#heading Your Title
+                      h3#shortScript Your Shortscript
+                      h5#paperContent Your Paper content here.
+                 div.text-center
+                      button#save(class="btn btn-primary")
+                          Save
+                      button#publish(class="btn btn-primary")
+                          Publish
