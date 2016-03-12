@@ -4,9 +4,9 @@ var logger=require('./log/logger.js');
 var path=require('path');
 var mongo=require('mongoose');
 var bodyParser=require('body-parser');
-
+var mongoosastic=require('mongoosastic');
+//============App Init
 var app=express();
-logger.info('Done Initiation');
 
 
 //==============Express Config=============//
@@ -15,30 +15,32 @@ app.use(express.static(__dirname + '/public'));
 app.set('views',path.join(__dirname,'views'));
 app.set('view engine','jade');
 
+
 //============Mongodb Config================//
-var save=mongo.createConnection('mongodb://db/savedDocs');
-var publish=mongo.createConnection('mongodb://db/publishedDocs');
+var save=mongo.createConnection('mongodb://localhost:27017/Docs');
+var publish=mongo.createConnection('mongodb://localhost:27017/Docs');
 
 
-//===============Schema Init================//
-var schema=new mongo.Schema({
-    userId:'string',
-    title:{type:string, es_indexed:true},
-    shortScript:{type:string, es_indexed:true},
-    body:{type:string, es_indexed:true}
-    
-    
-//================Mongo Models==============//
-var savedDoc=save.model('savedDoc',schema);
-var publishedDoc=publish.model('publishedDoc',schema);
+//===============Database(mongodb) Init================//
+//====Schema
+var doc=new mongo.Schema({
+     userId:String,
+     title:{type:String, es_indexed:true},
+     shortScript:{type:String, es_indexed:true},
+     body:{type:String, es_indexed:true}
+});
+
+var savedDoc=save.model('savedDoc',doc);
+var publishedDoc=publish.model('publishedDoc',doc);
+logger.info('Schema Modeling Done');
 
 
 //================Mongoosastic Config=========//
-schema.plugin(mongoosastic,{
+doc.plugin(mongoosastic,{
 	host:'search',
 	port:9200,
 	protocol:'https',
-	culrDebug:true}
+	culrDebug:true});
 //=================Mapping
 savedDoc.createMapping(function(err,mapping){
 	if(err){
@@ -52,19 +54,20 @@ savedDoc.createMapping(function(err,mapping){
 });
 
 
-//============Express Config================//
-app.use(morgan('combine',{'stream':logger.stream}));
+//====================Logger Config================//
+app.use(morgan(':method :url :status :response-time ms - :res[content-length]',{'stream':logger.stream}));
 logger.info('Overriding Express Logger');
 
 
-//======================Index Routing===================//
+//==================Index Routing===================//
 app.get('/editor',function(req,res){
     res.render('editor');
 });
 
-app.post('/editor/publish',function(req,res){
+app.post('/editor',function(req,res){
+    if(req.body.publish){ 
         var newDoc=new publishedDoc;
-        newDoc.userId=
+        newDoc.userId=req.user._id;
         newDoc.title=req.body.title;
         newDoc.shortScript=req.body.shortScript;
         newDoc.body=req.body.body;
@@ -72,26 +75,28 @@ app.post('/editor/publish',function(req,res){
         newDoc.save(function(err){
             if(err) logger.error('Something went wrong while saving the the document');
             logger.info('New Document Published');
+            newDoc.on('es-indexed',function(err,res){
+                if(err) throw err;
+                res.send('Published and Indexed');
+                logger.info('Document Indexed in Elasticsearch');
+            });
         });
-	
-        res.send('Published');
-});
-/*
+        
+    }
     else if(req.body.save){
         var newDoc=new savedDoc;
-        newDoc.userId=
+        newDoc.userId=req.user.email;
         newDoc.title=req.body.title;
         newDoc.shortScript=req.body.shortScript;
         newDoc.body=req.body.body;
         
-        newDoc.save(function(err){
+        newDoc.save(function(err,docu){
             if(err) logger.error('Something went wrong while saving the the document');
-            logger.info('Document "'+req.body.title+'" is Saved');
+            logger.info('Document "'+docu+'" is Saved');
         });
         res.send('Saved');
     }
 });
-*/
 
 //Saved Using Ajax
 //===========TODO Persisting single record only
@@ -108,6 +113,7 @@ app.post('/editor/save',function(req,res){
         });
         res.send('Saved');
 });
+
 
 //======================Port Config====================//
 var port=process.env.port||8080;
