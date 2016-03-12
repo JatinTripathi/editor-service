@@ -14,6 +14,9 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(express.static(__dirname + '/public'));
 app.set('views',path.join(__dirname,'views'));
 app.set('view engine','jade');
+//=================Logger Config
+app.use(morgan(':method :url :status :response-time ms - :res[content-length]',{'stream':logger.stream}));
+logger.info('Overriding Express Logger');
 
 
 //============Mongodb Config================//
@@ -36,6 +39,7 @@ logger.info('Schema Modeling Done');
 
 
 //================Mongoosastic Config=========//
+/*
 doc.plugin(mongoosastic,{
 	host:'search',
 	port:9200,
@@ -52,22 +56,16 @@ savedDoc.createMapping(function(err,mapping){
 		logger.info(mapping);
 	}
 });
-
-
-//====================Logger Config================//
-app.use(morgan(':method :url :status :response-time ms - :res[content-length]',{'stream':logger.stream}));
-logger.info('Overriding Express Logger');
-
+*/
 
 //==================Index Routing===================//
 app.get('/editor',function(req,res){
     res.render('editor');
 });
 
-app.post('/editor',function(req,res){
-    if(req.body.publish){ 
+app.post('/editor/publish',function(req,res){
         var newDoc=new publishedDoc;
-        newDoc.userId=req.user._id;
+        //newDoc.userId=req.user._id;
         newDoc.title=req.body.title;
         newDoc.shortScript=req.body.shortScript;
         newDoc.body=req.body.body;
@@ -82,10 +80,11 @@ app.post('/editor',function(req,res){
             });
         });
         
-    }
-    else if(req.body.save){
+});
+
+app.post('/editor/save',function(req,res){
         var newDoc=new savedDoc;
-        newDoc.userId=req.user.email;
+        //newDoc.userId=req.user.email;
         newDoc.title=req.body.title;
         newDoc.shortScript=req.body.shortScript;
         newDoc.body=req.body.body;
@@ -95,11 +94,11 @@ app.post('/editor',function(req,res){
             logger.info('Document "'+docu+'" is Saved');
         });
         res.send('Saved');
-    }
 });
 
 //Saved Using Ajax
 //===========TODO Persisting single record only
+/*
 app.post('/editor/save',function(req,res){
         var newDoc=new savedDoc;
         newDoc.userId=
@@ -113,7 +112,7 @@ app.post('/editor/save',function(req,res){
         });
         res.send('Saved');
 });
-
+*/
 
 //======================Port Config====================//
 var port=process.env.port||8080;
