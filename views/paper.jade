@@ -1,0 +1,13 @@
+extends layout
+
+block content
+    div.container
+        div.row
+            div.col-sm-10.col-md-8.col-md-offset-8
+                #doc
+                    form.editor.text-center(action='/editor/:id',method='POST')
+                        h1(name='title') #{doc.title}
+                        h3(name='shortScript') #{doc.shortScript}
+                        h5(name='content') #{doc.content}
+                        input.btn.btn-primary(type='submit',name='save',value='Save')
+                        input.btn.btn-primary(type='submit',name='publish',value='Publish')
