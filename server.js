@@ -30,7 +30,7 @@ var doc=new mongo.Schema({
      userId:String,
      title:{type:String, es_indexed:true},
      shortScript:{type:String, es_indexed:true},
-     body:{type:String, es_indexed:true}
+     content:{type:String, es_indexed:true}
 });
 
 var savedDoc=save.model('savedDoc',doc);
@@ -60,40 +60,82 @@ savedDoc.createMapping(function(err,mapping){
 
 //==================Index Routing===================//
 app.get('/editor',function(req,res){
-    res.render('editor');
+    res.render('neditor');
 });
 
-app.post('/editor/publish',function(req,res){
+app.get('/editor/saved/:id',function(req,res){
+    savedDoc.finById(req.params.id,function(err,doc){
+        if(err) throw err;
+        res.render('seditor',{doc:doc});
+    });
+});
+
+app.get('/editor/published/:id',function(req,res){
+    publishedDoc.findById(req.params.id,function(err,doc){
+        if(err) throw err;
+        res.render('paper',{doc:doc});
+    });
+});
+
+app.post('/editor/saved/:id',function(req,res){
+    if(req.body.publish){
         var newDoc=new publishedDoc;
         //newDoc.userId=req.user._id;
         newDoc.title=req.body.title;
         newDoc.shortScript=req.body.shortScript;
-        newDoc.body=req.body.body;
+        newDoc.content=req.body.content;
         
-        newDoc.save(function(err){
+        newDoc.save(function(err,doc){
             if(err) logger.error('Something went wrong while saving the the document');
             logger.info('New Document Published');
-            newDoc.on('es-indexed',function(err,res){
-                if(err) throw err;
-                res.send('Published and Indexed');
-                logger.info('Document Indexed in Elasticsearch');
+            res.redirect('/editor/publised/'+doc._id);
+        });
+    }
+    else if(req.body.save){
+        savedDoc.findById(req.params.id,function(err,doc){
+            if(err) throw err;
+            doc.title=req.body.title;
+            doc.shortScript=req.body.shortScript;
+            doc.body=req.body.content;
+            
+            newDoc.save(function(err,doc){
+                if(err) logger.error('Something went wrong while saving the the document');
+                logger.info('Document "'+doc+'" is Saved');
+                res.redirect('/editor/saved/'+doc._id);
             });
         });
+        //newDoc.userId=req.user.email;
         
+    }
 });
 
-app.post('/editor/save',function(req,res){
+app.post('/editor',function(req,res){
+    if(req.body.publish){
+        var newDoc=new publishedDoc;
+        //newDoc.userId=req.user._id;
+        newDoc.title=req.body.title;
+        newDoc.shortScript=req.body.shortScript;
+        newDoc.content=req.body.content;
+        
+        newDoc.save(function(err,doc){
+            if(err) logger.error('Something went wrong while saving the the document');
+            logger.info('New Document Published');
+            res.redirect('/editor/publised/'+doc._id);
+        });
+    }
+    else if(req.body.save){
         var newDoc=new savedDoc;
         //newDoc.userId=req.user.email;
         newDoc.title=req.body.title;
         newDoc.shortScript=req.body.shortScript;
-        newDoc.body=req.body.body;
+        newDoc.content=req.body.content;
         
-        newDoc.save(function(err,docu){
+        doc.save(function(err,doc){
             if(err) logger.error('Something went wrong while saving the the document');
-            logger.info('Document "'+docu+'" is Saved');
+            logger.info('Document "'+doc+'" is Saved');
+            res.redirect('/editor/saved/'+doc._id);
         });
-        res.send('Saved');
+    }
 });
 
 //Saved Using Ajax
