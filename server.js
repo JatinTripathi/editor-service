@@ -22,8 +22,8 @@ logger.info('Overriding Express Logger');
 
 
 //============Mongodb Config================//
-var save=mongo.createConnection('mongodb://mongo/Docs');
-var publish=mongo.createConnection('mongodb://mongo/Docs');
+var save=mongo.createConnection('mongodb://db/Docs');
+var publish=mongo.createConnection('mongodb://db/Docs');
 
 
 

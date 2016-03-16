@@ -5,7 +5,7 @@ var chunk;
 module.exports=function(matter,callback){
     var paper=querystring.stringify(matter);
     var options={
-        hostname:'elasticSearch',
+        hostname:'search',
         method:'POST',
         port:9200,
         path:'/index',
