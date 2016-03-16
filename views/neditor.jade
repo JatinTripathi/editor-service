@@ -3,11 +3,10 @@ extends layout
 block content
     div.container
         div.row
-            div.col-sm-10.col-md-8.col-md-offset-8
-                #user
-                    form.editor.text-center(action='/editor/:id',method='POST')
-                        input.form-control(type='text',name='title')
-                        input.form-control(type='text',name='shortScript')
-                        input.form-control(type='textarea',name='content')
-                        input.btn.btn-primary(type='submit',name='save',value='Save')
-                        input.btn.btn-primary(type='submit',name='publish',value='Publish')
+            div.col-md-8
+                form.editor.text-center(action='/editor',method='POST',role='form')
+                    input.form-control(type='text',name='title')
+                    input.form-control(type='text',name='shortScript')
+                    input.form-control(type='textarea',name='content')
+                    input.btn.btn-primary(type='submit',name='save',value='Save')
+                    input.btn.btn-primary(type='submit',name='publish',value='Publish')
