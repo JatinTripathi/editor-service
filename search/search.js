@@ -1,27 +1,27 @@
 var http=require('http');
 var querystring=require('querystring');
-var data,response;
+var chunk;
 
-module.exports=function(matter){
+module.exports=function(matter,callback){
     var paper=querystring.stringify(matter);
-    var option={
+    var options={
         hostname:'elasticSearch',
         method:'POST',
         port:9200,
-        path:'/map',
+        path:'/index',
         headers:{
             'Content-Type':'application/x-www-form-urlencoded',
             'Content-Length':'doc.length'
         }
     };
-    http.request(option,function(req,res){
+    http.request(options,function(req,res){
         req.write(paper);
         req.end();
-        res.on('data',function(chunk){
-            data=+chunk;
+        res.on('data',function(data){
+            chunk+=data;
         });
         res.on('end',function(){
-            return response=data;
+            callback(chunk);
         });
     });
 };

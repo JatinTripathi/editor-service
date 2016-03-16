@@ -4,6 +4,7 @@ var logger=require('./log/logger.js');
 var path=require('path');
 var mongo=require('mongoose');
 var bodyParser=require('body-parser');
+var search=require('./search/search.js');
 //============App Init
 var app=express();
 
@@ -21,8 +22,8 @@ logger.info('Overriding Express Logger');
 
 
 //============Mongodb Config================//
-var save=mongo.createConnection('mongodb://localhost:27017/Docs');
-var publish=mongo.createConnection('mongodb://localhost:27017/Docs');
+var save=mongo.createConnection('mongodb://mongo/Docs');
+var publish=mongo.createConnection('mongodb://mongo/Docs');
 
 
 
@@ -72,6 +73,9 @@ app.post('/editor/saved/:id',function(req,res){
             if(err) logger.error('Something went wrong while saving the the document');
             logger.info('New Document Published');
             res.redirect('/editor/published/'+doc._id);
+            search(doc,function(data){
+                logger.info('Elasticsearch returned'+data);
+            });
         });
     }
     else if(req.body.save){
@@ -104,6 +108,9 @@ app.post('/editor',function(req,res){
             if(err) logger.error('Something went wrong while saving the the document');
             logger.info('New Document Published');
             res.redirect('/editor/published/'+doc._id);
+            search(doc,function(data){
+                logger.info('Elasticsearch returned'+data);
+            });
         });
     }
     else if(req.body.save){
@@ -125,5 +132,6 @@ app.post('/editor',function(req,res){
 
 //======================Port Config====================//
 var port=process.env.port||8080;
-app.listen(port);
-logger.info('Listening at Port No.'+port);
+app.listen(port,function(){
+    logger.info('Listening at Port No.'+port);
+});
