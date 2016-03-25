@@ -4,6 +4,7 @@ This is an end microservice application giving the functionality of online text 
 * Persisting the saved part after consecutive saves
 * Publishing the articles for feeds
 * Sending the published article to search microservice
+
 There will be two collection "SavedDoc" and "PublishedDoc" in our "Docs" Mongodb Database.
 
 ##Prerequisites:
